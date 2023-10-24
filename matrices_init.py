@@ -93,8 +93,4 @@ class RandomMatrices:
     def clear(self):
         self.matrices = np.array([])
 
-b = RandomMatrices((4, 4))
-b.add(1, distribution='integer', low=-10, high=10)
-print(b.matrices)
-
 
