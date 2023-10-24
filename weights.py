@@ -1,6 +1,7 @@
 import numpy as np
 import scipy.spatial as sp
 import optuna
+import random as rd
 from functools import partial
 
 class Weights:
@@ -27,16 +28,18 @@ class Weights:
     - max: Maximum value in A.
     """
 
-    def __init__(self, random_state=21, n_trials=50, **kwargs) -> None:
-        self.study = None
-        self.weights = None
+    def __init__(self, random_state=rd.randint(0, 10000), n_trials=50, **kwargs) -> None:
         self.random_state = random_state
         self.n_trials = n_trials
         self.errors = []
-        self.supported = ['chebyshev', 'euclidean', 'cosine', 'cityblock', 'canberra', 'correlation', 'braycurtis']
-        self.distance = kwargs.get('distance', 'euclidean')
+        self.supported_scipy = ['chebyshev', 'euclidean', 'cosine', 'cityblock', 'canberra', 'correlation', 'braycurtis']
+        self.supported_numpy = ['fro', 'nuc', np.inf, -np.inf, 1, 2, -1, -2]
+        self.distance = kwargs.get('distance', 'fro')
+        self.distance_library = None
         self.min = None
         self.max = None
+        self.study = None
+        self.weights = None
 
     def __distance(self, A, B_matrices) -> float:
         """
@@ -50,11 +53,21 @@ class Weights:
         - distance (float): Distance between A and the weighted sum of B_matrices.
         """
         distance = self.distance
+        if distance in self.supported_numpy:
+            self.distance_library = 'numpy'
+        elif distance in self.supported_scipy:
+            self.distance_library = 'scipy'
+        else:
+            raise ValueError("Distance metric is not supported. Append it to class atribute or choose from Numpy: 'fro', 'nuc', 'inf', '-inf', '0', '1', '2', '-1', '-2', Scipy: 'chebyshev', 'euclidean', 'cosine', 'cityblock', 'canberra', 'correlation', 'braycurtis'")
+            return False
+        
         B_matrices = np.array(B_matrices)
-        if distance not in self.supported:
-            raise ValueError("Distance metric is not supported. Append it to class atribute or choose from supported")
         weighted_sum = sum(weight * B for weight, B in zip(self.weights, B_matrices))
-        return np.sum(sp.distance.cdist(A, weighted_sum, distance))
+
+        if self.distance_library == 'numpy':
+            return np.linalg.norm(A - weighted_sum, ord=distance)
+        else:
+            return np.sum(sp.distance.cdist(A, weighted_sum, distance))
 
     def __objective(self, trial, A, B_matrices):
         """
@@ -100,7 +113,7 @@ class Weights:
         - weighted_sum (ndarray): Weighted sum of B_matrices.
         """
         B_matrices = np.array(B_matrices)
-        assert self.weights is not None, 'OptunaWeights error, must be fitted before predict'
+        assert self.weights is not None, 'Weights error, must be fitted before predict'
         weighted_sum = sum(weight * B for weight, B in zip(self.weights, B_matrices))
         return weighted_sum
 
