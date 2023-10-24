@@ -20,7 +20,7 @@ class Desummation():
         optimizer.fit(A, B.matrices)
     
     def predict(self, A):
-        return self.optimizer.fit_predict(A, self.B.matrices)
+        return self.optimizer.fit_predict(A, self.basis.matrices)
     
 
 
