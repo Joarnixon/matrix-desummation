@@ -15,12 +15,14 @@ I suppose that the reader is familiar with basics of linear algebra and can reme
 ### Some popular mathematical theorems on this topic:
 
  - Spectral decomposition of a symmetric matrix:
+ 
 $$
   A = Q \Lambda Q^T = \sum_{i=1}^{n} \lambda_i*u_iu_i^T = \sum_{i=1}^{n} \lambda_i * U_i
 $$
 
 #### Actually this theorem works for any matrix but with some modification:
 - Spectral decomposition for diagonalizable matrix:
+
 $$
   A = S \Lambda S^{-1} = \sum_{i=1}^{n} S  \begin{pmatrix}
     0 & 0 & 0 & \ldots & 0 \\
@@ -33,7 +35,7 @@ $$
 - We can even construct basis with $n^2$ dimension:
 
 $$
-  B_{ij}= \begin{pmatrix}
+  B_{ij} = \begin{pmatrix}
     0 & 0 & 0 & \ldots & 0 \\
     0 & \ddots & 1 & \ldots & 0 \\
     0 & 0 & 0 & \ldots & 0 \\
