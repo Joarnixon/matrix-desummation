@@ -1,9 +1,8 @@
 # This project is a small experiment
 ### It does not aim to provide a new theorem or strict proof, but anyway it's an interesting idea.
 ### Sometimes inspiration to a problem can come via looking from another perspective or even from whole different field of research.
-<<<<<<< HEAD
+
 ### All instructions, math and code can be found in presentation.ipynb. Open it in github or clone the repository
-### Thanks for visiting
 
 # What is desummation?
 
@@ -23,13 +22,13 @@ $$
 #### Actually this theorem works for any matrix but with some modification:
 - Spectral decomposition for diagonalizable matrix:
 $$
-   A = S \Lambda S^{-1} = \sum_{i=1}^{n} S  \begin{pmatrix}
+  A = S \Lambda S^{-1} = \sum_{i=1}^{n} S  \begin{pmatrix}
     0 & 0 & 0 & \ldots & 0 \\
     0 & \ddots & 0 & \ldots & 0 \\
     0 & 0 & \lambda_i & \ldots & 0 \\
     \vdots & \vdots & \vdots & \ddots & \vdots \\
     0 & 0 & 0 & \ldots & 0 \\
-\end{pmatrix}S^{-1}= \sum_{i=1}^{n}M_i
+  \end{pmatrix}S^{-1}= \sum_{i=1}^{n}M_i
 $$
 - We can even construct basis with $n^2$ dimension:
 
@@ -59,7 +58,5 @@ $$
 - What if these weights(*) are some sort of `coordinate space` (of course with fixed basis of $B_i$ matrices)
 
 # For further reading please open presentation.ipynb or clone the repository
-=======
 ### All instructions, math and code can be found in `presentation.ipynb`. Open it in github or clone the repository
 # Thanks for visiting
->>>>>>> 28708ce2e9f39b0fac78442b36c89c662b00bdac
