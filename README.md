@@ -14,11 +14,11 @@ I suppose that the reader is familiar with basics of linear algebra and can reme
 #### Actually this theorem works for any matrix but with some modification:
 - Spectral decomposition for diagonalizable matrix:
   $A = S \Lambda S^{-1} = \sum_{i=1}^{n} S  \begin{pmatrix}
-    0 & 0 & 0 & \ldots & 0 \\
-    0 & \ddots & 0 & \ldots & 0 \\
-    0 & 0 & \lambda_i & \ldots & 0 \\
-    \vdots & \vdots & \vdots & \ddots & \vdots \\
-    0 & 0 & 0 & \ldots & 0 \\
+    0 & 0 & 0 & \ldots & 0 \\\
+    0 & \ddots & 0 & \ldots & 0 \\\
+    0 & 0 & \lambda_i & \ldots & 0 \\\
+    \vdots & \vdots & \vdots & \ddots & \vdots \\\
+    0 & 0 & 0 & \ldots & 0 \\\
 \end{pmatrix}S^{-1} = \sum_{i=1}^{n}M_i$
 
 #### Or one may use Singular Value Decomposition with the same approach
@@ -37,7 +37,13 @@ I suppose that the reader is familiar with basics of linear algebra and can reme
 - What if these weights(*) are some sort of `coordinate space` (of course with fixed basis of $B_i$ matrices)
 
 # Now we are ready to start
+
+- ### Open presentation.ipynb or clone the repository
+
+
 ### Links:
+
+
 Spectral decomposition of symmetric matrix
 - https://inst.eecs.berkeley.edu/~ee127/sp21/livebook/thm_sed.html
 
