@@ -13,13 +13,13 @@ I suppose that the reader is familiar with basics of linear algebra and can reme
 
 #### Actually this theorem works for any matrix but with some modification:
 - Spectral decomposition for diagonalizable matrix:
-  $$A = S \Lambda S^{-1} = \sum_{i=1}^{n} S  \begin{pmatrix}
+  $$ A = S \Lambda S^{-1} = \sum_{i=1}^{n} S  \begin{pmatrix}
     0 & 0 & 0 & \ldots & 0 \\\
     0 & \ddots & 0 & \ldots & 0 \\\
     0 & 0 & \lambda_i & \ldots & 0 \\\
     \vdots & \vdots & \vdots & \ddots & \vdots \\\
     0 & 0 & 0 & \ldots & 0 \\\
-\end{pmatrix}S^{-1} = \sum_{i=1}^{n}M_i$$
+\end{pmatrix}S^{-1} = \sum_{i=1}^{n}M_i $$
 
 #### Or one may use Singular Value Decomposition with the same approach
 
