@@ -1,6 +1,7 @@
 # This project is a small experiment
 ### It does not aim to provide a new theorem or strict proof, but anyway it's an interesting idea.
 ### Sometimes inspiration to a problem can come via looking from another perspective or even from whole different field of research.
+<<<<<<< HEAD
 ### All instructions, math and code can be found in presentation.ipynb. Open it in github or clone the repository
 ### Thanks for visiting
 
@@ -58,3 +59,7 @@ $$
 - What if these weights(*) are some sort of `coordinate space` (of course with fixed basis of $B_i$ matrices)
 
 # For further reading please open presentation.ipynb or clone the repository
+=======
+### All instructions, math and code can be found in `presentation.ipynb`. Open it in github or clone the repository
+# Thanks for visiting
+>>>>>>> 28708ce2e9f39b0fac78442b36c89c662b00bdac
