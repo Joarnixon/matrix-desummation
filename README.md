@@ -8,7 +8,9 @@
 
 By that, I mean representing a given matrix A as a sum of matrices $\cdot B_i$ with corresponding weights or coefficients $\cdot w_i$.
 
-$A = w_1 \cdot B_1 + w_2 \cdot B_2 + \ldots + w_n \cdot B_n$
+$$
+  A = w_1 \cdot B_1 + w_2 \cdot B_2 + \ldots + w_n \cdot B_n
+$$
 
 I assume that the reader is familiar with the basics of linear algebra and can easily recall the facts used.
 
