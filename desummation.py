@@ -22,6 +22,10 @@ class Desummation():
     def predict(self, A):
         return self.optimizer.fit_predict(A, self.basis.matrices)
     
+    def fit_predict(self, A, amount, **kwargs):
+        self.fit(A, amount, **kwargs)
+        return self.predict(A)
+    
 
 
 
