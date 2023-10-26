@@ -9,82 +9,17 @@ class Weights:
     Class for decomposing A into a weighted sum of B_matrices.
 
     Parameters:
-    - random_state (int): Random seed for reproducibility.
     - **kwargs: Additional keyword arguments.
-        - n_trials (int): Number of optimization trials
-        - distance (str): Distance metric to use for calculating the error. Default is 'euclidean'.
-        - Supported distance: 'chebyshev', 'euclidean', 'cosine', 'cityblock', 'canberra', 'correlation', 'braycurtis'.
-        - Can be added new distance metrics inside class instance if you know what you are doing.
-
-    Attributes:
-    - study: Optuna study object.
-    - weights (list): List of weights for the B_matrices.
-    - random_state (int): Random seed for reproducibility.
-    - n_trials (int): Number of optimization trials.
-    - errors (list): List of errors during optimization.
-    - distance (str): Distance metric to use for calculating the error.
-    - supported (list): List of supported distance metrics.
-    - min: Minimum value in A.
-    - max: Maximum value in A.
+        - random_state(int): Random seed for reproducibility.
     """
 
-    def __init__(self, random_state=rd.randint(0, 10000), **kwargs) -> None:
-        self.random_state = random_state
-        self.errors = []
-        self.supported_scipy = ['chebyshev', 'euclidean', 'cosine', 'cityblock', 'canberra', 'correlation', 'braycurtis']
-        self.supported_numpy = ['fro', 'nuc', np.inf, -np.inf, 1, 2, -1, -2]
-        self.distance = kwargs.get('distance', 'fro')
-        self.n_trials = kwargs.get('n_trials', 50)
-        self.distance_library = None
-        self.min = None
-        self.max = None
-        self.study = None
+    def __init__(self, **kwargs) -> None:
+        self.random_state = kwargs.get('random_state', rd.randint(0, 100000))
+        self.error = 0
         self.weights = None
-
-    def __distance(self, A, B_matrices) -> float:
-        """
-        Calculate the distance between A and the weighted sum of B_matrices.
-
-        Parameters:
-        - A (ndarray): True values.
-        - B_matrices (list): List of predicted matrices.
-
-        Returns:
-        - distance (float): Distance between A and the weighted sum of B_matrices.
-        """
-        distance = self.distance
-        if distance in self.supported_numpy:
-            self.distance_library = 'numpy'
-        elif distance in self.supported_scipy:
-            self.distance_library = 'scipy'
-        else:
-            raise ValueError("Distance metric is not supported. Append it to class atribute or choose from Numpy: 'fro', 'nuc', 'inf', '-inf', '0', '1', '2', '-1', '-2', Scipy: 'chebyshev', 'euclidean', 'cosine', 'cityblock', 'canberra', 'correlation', 'braycurtis'")
-            return False
-        
-        B_matrices = np.array(B_matrices)
-        weighted_sum = sum(weight * B for weight, B in zip(self.weights, B_matrices))
-
-        if self.distance_library == 'numpy':
-            return np.linalg.norm(A - weighted_sum, ord=distance)
-        else:
-            return np.sum(sp.distance.cdist(A, weighted_sum, distance))
-
-    def __objective(self, trial, A, B_matrices):
-        """
-        Objective function for optimization.
-
-        Parameters:
-        - trial: Optuna trial object.
-        - A (ndarray): True values.
-        - B_matrices (list): List of predicted matrices.
-
-        Returns:
-        - score (float): Error score.
-        """
-        self.weights = [trial.suggest_float(f"weight{n}", -self.max, self.max) for n in range(len(B_matrices))]
-        score = self.__distance(A=A, B_matrices=B_matrices)
-        self.errors.append(score)
-        return score
+    
+    def loss(self, basis, target, distance='fro'):
+        return np.linalg.norm(target - np.tensordot(self.weights, basis, axes=1), ord=distance)
 
     def fit(self, A, B_matrices):
         """
@@ -94,15 +29,24 @@ class Weights:
         - A (ndarray): Matrix to decompose.
         - B_matrices (list): List of matrices which will be used to decompose.
         """
-        self.min = np.min(A)
-        self.max = np.max(A)
-        optuna.logging.set_verbosity(optuna.logging.ERROR)
-        sampler = optuna.samplers.CmaEsSampler(seed=self.random_state)
-        pruner = optuna.pruners.HyperbandPruner()
-        self.study = optuna.create_study(sampler=sampler, pruner=pruner, study_name="OptunaWeights", direction='minimize')
-        objective_partial = partial(self.__objective, A=A, B_matrices=B_matrices)
-        self.study.optimize(objective_partial, n_trials=self.n_trials)
-        self.weights = [self.study.best_params[f"weight{n}"] for n in range(len(B_matrices))]
+        target = np.array(A)
+        shape = target.shape
+        basis = np.array(B_matrices)
+        k = len(basis)
+
+        C = np.zeros((shape[0] * shape[1], k))
+
+        for i in range(k):
+            C[:, i] = basis[i].flatten()
+        p = np.array(target).flatten()
+
+        # Use the least squares method to solve the system
+        x, residuals, rank, singular_values = np.linalg.lstsq(C, p, rcond=None)
+
+        # The solution vector x contains the values of w1, w2, w3, ..., wk
+        w = x[:k]
+        self.weights = w
+        self.error = self.loss(basis=basis, target=target)
 
     def predict(self, B_matrices):
         """

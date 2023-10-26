@@ -1,18 +1,33 @@
 from matrices_init import RandomMatrices
-from weights import Weights
 import numpy as np
 import random as rd
 
+from weights import Weights as WeightsNew
+from weights_old import Weights as WeightsOld
+
 class Desummation():
-    def __init__(self):
+    '''
+    If you want to experiment with bayesian optimization technique for weights searching
+    or if you find it more suitable for you problem use frobenius=False
+    in other cases frobenius=True is the best choice.
+    '''
+    def __init__(self, frobenius=True):
         self.basis : RandomMatrices = None
-        self.optimizer : Weights = None
+        self.frobenius = frobenius
+        if frobenius == True:
+            self.optimizer : WeightsNew = None
+        else:
+            self.optimizer : WeightsOld = None
 
     def error(self):
         if self.optimizer == None:
             raise ValueError("first execute fit command to get an error")
         else:
-            return self.optimizer.errors[-1]
+            error = self.optimizer.error
+            if isinstance(error, list):
+                return error[-1]
+            else:
+                return error
 
     def weights(self):
         if self.optimizer == None:
@@ -61,9 +76,11 @@ class Desummation():
         self.basis = B
         B.add(amount, **kwargs)
 
-        optimizer = Weights(**kwargs)
-        self.optimizer = optimizer
-        optimizer.fit(A, B.matrices)
+        if self.frobenius == True:
+            self.optimizer = WeightsNew(**kwargs)
+        else:
+            self.optimizer = WeightsOld(**kwargs)
+        self.optimizer.fit(A, B.matrices)
     
     def predict(self, A):
         '''
