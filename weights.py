@@ -10,8 +10,8 @@ class Weights:
 
     Parameters:
     - random_state (int): Random seed for reproducibility.
-    - n_trials (int): Number of optimization trials.
     - **kwargs: Additional keyword arguments.
+        - n_trials (int): Number of optimization trials
         - distance (str): Distance metric to use for calculating the error. Default is 'euclidean'.
         - Supported distance: 'chebyshev', 'euclidean', 'cosine', 'cityblock', 'canberra', 'correlation', 'braycurtis'.
         - Can be added new distance metrics inside class instance if you know what you are doing.
@@ -28,13 +28,13 @@ class Weights:
     - max: Maximum value in A.
     """
 
-    def __init__(self, random_state=rd.randint(0, 10000), n_trials=50, **kwargs) -> None:
+    def __init__(self, random_state=rd.randint(0, 10000), **kwargs) -> None:
         self.random_state = random_state
-        self.n_trials = n_trials
         self.errors = []
         self.supported_scipy = ['chebyshev', 'euclidean', 'cosine', 'cityblock', 'canberra', 'correlation', 'braycurtis']
         self.supported_numpy = ['fro', 'nuc', np.inf, -np.inf, 1, 2, -1, -2]
         self.distance = kwargs.get('distance', 'fro')
+        self.n_trials = kwargs.get('n_trials', 50)
         self.distance_library = None
         self.min = None
         self.max = None
@@ -114,7 +114,7 @@ class Weights:
         """
         B_matrices = np.array(B_matrices)
         assert self.weights is not None, 'Weights error, must be fitted before predict'
-        weighted_sum = sum(weight * B for weight, B in zip(self.weights, B_matrices))
+        weighted_sum = np.tensordot(self.weights, B_matrices, axes=1)
         return weighted_sum
 
     def fit_predict(self, A, B_matrices):
