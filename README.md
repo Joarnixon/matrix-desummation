@@ -1,10 +1,11 @@
 # This project is a small experiment
-### It does not aim to provide a new theorem or strict proof, but anyway it's an interesting idea.
-### Sometimes inspiration for a problem can come from looking at it from another perspective or even from a completely different field of research.
+### Which after some research came up to be a view from another perspective on SVD and NMF.
+
+### Sometimes inspiration for a problem can come from looking at it from another perspective or even from a completely different field of research, so I would recommend you to take a glance at what research I did.
 
 ### All instructions, math and code can be found in presentation.ipynb. Open it in github or clone the repository
 
-# What is desummation?
+# What I mean by desummation?
 
 By that, I mean representing a given matrix A as a sum of matrices $\cdot B_i$ with corresponding weights or coefficients $\cdot w_i$.
 
@@ -54,6 +55,8 @@ $$
  - This is one of the methods for reducing the dimensionality of feature space in ML, but we don't actually decompose it into a sum.
  
  - Instead we take smallest singular values and replace with zero obtaining lower rank approximation that (can be proven) will be the best amongst all other matrices that rank (by Frobenius norm).
+
+ - Or find sort of projection on a matrix space with lower rank using Non-Negative Matrix Factorization.
 
 ### Motivation:
 - Very naive and simple: experiment with matrix topology and make some research.
