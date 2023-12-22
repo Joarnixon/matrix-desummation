@@ -1,5 +1,10 @@
 # This project is a small experiment
-### Which after some research came up to be a view from another perspective on SVD and NMF.
+### Which after some research came up to be a view from another perspective on SVD, NMF and Regression.
+
+
+# Simple introduction is at demo.ipynb
+
+
 
 ### Sometimes inspiration for a problem can come from looking at it from another perspective or even from a completely different field of research, so I would recommend you to take a glance at what research I did.
 
@@ -65,6 +70,5 @@ other matrices `better` than the others?
 - What if we aply this to `pictures`? _We might lose some information in process, but instead we gain $\ldots$ weights(*)_
 - What if these weights(*) represent some sort of `coordinate space` (with a fixed basis of $B_i$ matrices)
 
-# For further reading, please open presentation.ipynb or clone the repository.
-### All instructions, math and code can be found in `presentation.ipynb`. Open it in github or clone the repository
+### All math and code can be found in `HowAndWhyItWorks.ipynb`. Open it in github or clone the repository
 # Thank you for visiting
