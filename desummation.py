@@ -4,6 +4,7 @@ import random as rd
 import scipy.spatial as sp
 import optuna
 from functools import partial
+from scipy.optimize import nnls
 
 class Desummation():
     '''
@@ -22,11 +23,13 @@ class Desummation():
         else:
             self.optimizer : Weights_old = None
         
-    def fit(self, A, k=None, **kwargs):
+    def fit(self, A, k=None, positive=False, **kwargs):
         '''
         Arguments:
             A - matrix to fit
             k - how many random matrices will be generated
+            positive - Whether or not to solve in positive.
+            
             **kwargs - additional keyword arguments
 
         Keyword Args:
@@ -52,17 +55,19 @@ class Desummation():
                 Can be added new distance metrics inside class instance if you know what you are doing.
         '''
         A = np.array(A)
+        if len(A.shape) == 1:
+            A = A.reshape(A.shape[0], 1)
         if k is None:
             k = len(A)
         B = RandomMatrices(A.shape)
         B.add(k, **kwargs)
         self.basis = B.matrices
-        
+
         if self.frobenius == True:
             self.optimizer = Weights(**kwargs)
         else:
             self.optimizer = Weights_old(**kwargs)
-        self.optimizer.fit(A, B.matrices)
+        self.optimizer.fit(A, B.matrices, positive)
         self.weights = self.optimizer.weights
         error = self.optimizer.error
         if isinstance(error, list):
@@ -70,19 +75,23 @@ class Desummation():
         else:
             self.error = error
     
-    def predict(self, A):
+    def predict(self, A, positive=False):
         '''
         Fits to a given matrix A without creating new random matrices
         '''
-        return self.optimizer.fit_predict(A, self.basis)
+        predicted = self.optimizer.fit_predict(A, self.basis, positive)
+        self.weights = self.optimizer.weights
+        self.error = self.optimizer.error
+        return predicted
     
-    def fit_predict(self, A, k=None, **kwargs):
+    def fit_predict(self, A, k=None, positive=False, **kwargs):
         '''
         Fits and then predicts to a given matrix A with creating new random matrices
         
         Arguments:
             A - matrix to fit
             k - how many random matrices will be generated
+            positive - Whether or not to solve in positive.
             **kwargs - additional keyword arguments
 
         Keyword Args:
@@ -109,8 +118,8 @@ class Desummation():
         '''
         if k is None:
             k = len(A)
-        self.fit(A, k, **kwargs)
-        return self.predict(A)
+        self.fit(A, k, positive, **kwargs)
+        return self.predict(A, positive)
             
 
 
@@ -230,15 +239,18 @@ class Weights:
     def loss(self, basis, target, distance='fro'):
         return np.linalg.norm(target - np.tensordot(self.weights, basis, axes=1), ord=distance)
 
-    def fit(self, A, B_matrices):
+    def fit(self, A, B_matrices, positive):
         """
         Fit the weights to decompose A into a weighted sum of B_matrices.
 
         Parameters:
         - A (ndarray): Matrix to decompose.
         - B_matrices (list): List of matrices which will be used to decompose.
+        - positive (bool): Whether or not to solve in positive.
         """
         target = np.array(A)
+        if len(target.shape) == 1:
+            target = target.reshape(target.shape[0], 1)
         shape = target.shape
         basis = np.array(B_matrices)
         k = len(basis)
@@ -248,10 +260,11 @@ class Weights:
         for i in range(k):
             C[:, i] = basis[i].flatten()
         p = np.array(target).flatten()
-
         # Use the least squares method to solve the system
-        x, residuals, rank, singular_values = np.linalg.lstsq(C, p, rcond=None)
-
+        if positive is False:
+            x, residuals, rank, singular_values = np.linalg.lstsq(C, p, rcond=None)
+        else:
+            x, e = nnls(C, p, maxiter=5*C.shape[1])
         # The solution vector x contains the values of w1, w2, w3, ..., wk
         w = x[:k]
         self.weights = w
@@ -270,15 +283,16 @@ class Weights:
         weighted_sum = np.tensordot(self.weights, B_matrices, axes=1)
         return weighted_sum
 
-    def fit_predict(self, A, B_matrices):
+    def fit_predict(self, A, B_matrices, positive):
         """
         Fit the weights and returns the weighted sum of B_matrices.
 
         Parameters:
         - A (ndarray): Matrix to decompose.
         - B_matrices (list): List of matrices which will be used to decompose.
+        - positive (bool): Whether or not to solve in positive.
         """
-        self.fit(A, B_matrices)
+        self.fit(A, B_matrices, positive)
         return self.predict(B_matrices)
     
     def __str__(self):
@@ -346,6 +360,10 @@ class Weights_old:
         
         B_matrices = np.array(B_matrices)
         weighted_sum = sum(weight * B for weight, B in zip(self.weights, B_matrices))
+        
+        A = np.array(A)
+        if len(A.shape) == 1:
+            A = A.reshape(A.shape[0], 1)
 
         if self.distance_library == 'numpy':
             return np.linalg.norm(A - weighted_sum, ord=distance)
