@@ -1,14 +1,12 @@
-# This project is a small experiment
+
+# Simple introduction can be found at demo.ipynb
+
+
+# Abstract:
+
+### This project was a small experiment.
 ### Which after some research came up to be a view from another perspective on SVD, NMF and Regression.
-
-
-# Simple introduction is at demo.ipynb
-
-
-
-### Sometimes inspiration for a problem can come from looking at it from another perspective or even from a completely different field of research, so I would recommend you to take a glance at what research I did.
-
-### All instructions, math and code can be found in presentation.ipynb. Open it in github or clone the repository
+### Sometimes inspiration for a problem can come from looking at it from another perspective or even from a completely different field of research, so I would recommend you to take a glance at what I did.
 
 # What I mean by desummation?
 
