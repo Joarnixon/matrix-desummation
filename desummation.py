@@ -12,7 +12,7 @@ class Desummation():
     in other cases frobenius=True is the best choice.
     '''
     def __init__(self, frobenius=True):
-        self.basis : RandomMatrices = None
+        self.basis = None
         self.frobenius = frobenius
         self.weights = None
         self.error = None
@@ -55,9 +55,9 @@ class Desummation():
         if k is None:
             k = len(A)
         B = RandomMatrices(A.shape)
-        self.basis = B
         B.add(k, **kwargs)
-
+        self.basis = B.matrices
+        
         if self.frobenius == True:
             self.optimizer = Weights(**kwargs)
         else:
@@ -74,7 +74,7 @@ class Desummation():
         '''
         Fits to a given matrix A without creating new random matrices
         '''
-        return self.optimizer.fit_predict(A, self.basis.matrices)
+        return self.optimizer.fit_predict(A, self.basis)
     
     def fit_predict(self, A, k=None, **kwargs):
         '''
@@ -222,7 +222,6 @@ class Weights:
     - **kwargs: Additional keyword arguments.
         - random_state(int): Random seed for reproducibility.
     """
-
     def __init__(self, **kwargs) -> None:
         self.random_state = kwargs.get('random_state', rd.randint(0, 100000))
         self.error = 0
@@ -312,7 +311,6 @@ class Weights_old:
     - min: Minimum value in A.
     - max: Maximum value in A.
     """
-
     def __init__(self, random_state=rd.randint(0, 10000), **kwargs) -> None:
         self.random_state = random_state
         self.error = []
